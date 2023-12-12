@@ -1,9 +1,9 @@
 <?php
 /*
-Plugin Name: 小工具
-Version: 0.0.2
+Plugin Name: 工具箱
+Version: 0.0.3
 Plugin URL: https://www.emlog.net/plugin/detail/622
-Description: 一些常用的小工具
+Description: 一些emlog系统常用的工具
 Author: emlog
 Author URL: https://www.emlog.net/plugin/index/author/577
 */
@@ -15,8 +15,8 @@ class EmToolKit {
 
     //插件标识
     const ID = 'em_toolkit';
-    const NAME = '工具箱插件';
-    const VERSION = '0.0.1';
+    const NAME = '工具箱';
+    const VERSION = '0.0.3';
 
     //实例
     private static $_instance;
@@ -82,7 +82,7 @@ class EmToolKit {
      * @return void
      */
     public function hookSidebar() {
-        print('<a class="collapse-item" id="menu_plug_em_toolkit" href="plugin.php?plugin=em_toolkit">小工具</a>');
+        print('<a class="collapse-item" id="menu_plug_em_toolkit" href="plugin.php?plugin=em_toolkit">工具箱</a>');
     }
 
     public function changeDomain($oldDomain, $newDomain) {
@@ -226,6 +226,43 @@ class EmToolKit {
                 $msg .= '数据表: ' . $table . ' 修复完成<br>';
             }
         }
+
+        $tables = [
+            'sort' => [
+                'sid int unsigned',
+                'sortname varchar(255)',
+                'alias varchar(255)',
+                'taxis int unsigned',
+                'pid int unsigned',
+                'description text',
+                'kw varchar(2048)',
+                'template varchar(255)'
+            ],
+        ];
+
+        foreach ($tables as $table => $fields) {
+            $tableName = DB_PREFIX . $table;
+            $query = "DESCRIBE " . $tableName;
+            $result = $db->query($query);
+
+            if ($result) {
+                $existingFields = [];
+                while ($row = $result->fetch_assoc()) {
+                    $existingFields[] = $row['Field'] . ' ' . $row['Type'];
+                }
+                $missingFields = array_diff($fields, $existingFields);
+
+                if (!empty($missingFields)) {
+                    foreach ($missingFields as $field) {
+                        $alterQuery = "ALTER TABLE $tableName ADD COLUMN $field";
+                        if ($db->query($alterQuery) === TRUE) {
+                            $msg .= '数据表: ' . $tableName . ' 结构修复完成 Added missing field: ' . $field . '<br>';
+                        }
+                    }
+                }
+            }
+        }
+
         Output::ok($msg);
     }
 

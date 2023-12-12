@@ -15,7 +15,7 @@ function plugin_setting_view() {
         <div class="alert alert-success">保存成功</div>
     <?php endif; ?>
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">小工具</h1>
+        <h1 class="h3 mb-0 text-gray-800">工具箱</h1>
     </div>
     <div class="row">
         <div class="col-md-6">
@@ -70,8 +70,8 @@ function plugin_setting_view() {
                 <div class="card-body" id="admindex_msg">
                     <div class="form-group form-check">
                         <div class="alert alert-primary">
-                            如果你的站点出现SQL错误提示，内容有"try to repair it"字样，说明数据库表需要修复。<br/>
-                            本功能可以一键修复emlog数据库中所有出错的数据表。
+                            如果你的站点出现SQL错误提示，报错内容包含："try to repair it" 或者 "Unknown column 'xxx' in 'field list' "字样，说明数据库表需要修复。<br/>
+                            本功能可以一键修复emlog数据库中所有出错的数据表，包括数据库表字段缺失等。
                         </div>
                         <button id="repairTableBtn" class="btn btn-sm btn-success">开始修复</button>
                         <div id="repairTableStatusMsg" class="mt-3"></div>
