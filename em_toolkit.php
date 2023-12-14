@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: 工具箱
-Version: 0.0.3
+Version: 0.0.4
 Plugin URL: https://www.emlog.net/plugin/detail/622
 Description: 一些emlog系统常用的工具
 Author: emlog
@@ -229,40 +229,24 @@ class EmToolKit {
 
         $tables = [
             'sort' => [
-                'sid int unsigned',
-                'sortname varchar(255)',
-                'alias varchar(255)',
-                'taxis int unsigned',
-                'pid int unsigned',
-                'description text',
-                'kw varchar(2048)',
-                'template varchar(255)'
+                "sid int(11) unsigned NOT NULL auto_increment",
+                "sortname varchar(255) NOT NULL default ''",
+                "alias VARCHAR(255) NOT NULL DEFAULT ''",
+                "taxis int(11) unsigned NOT NULL default '0'",
+                "pid int(11) unsigned NOT NULL default '0'",
+                "description text NOT NULL",
+                "kw VARCHAR(2048) NOT NULL DEFAULT ''",
+                "template varchar(255) NOT NULL default ''",
             ],
         ];
 
         foreach ($tables as $table => $fields) {
             $tableName = DB_PREFIX . $table;
-            $query = "DESCRIBE " . $tableName;
-            $result = $db->query($query);
-
-            if ($result) {
-                $existingFields = [];
-                while ($row = $result->fetch_assoc()) {
-                    $existingFields[] = $row['Field'] . ' ' . $row['Type'];
-                }
-                $missingFields = array_diff($fields, $existingFields);
-
-                if (!empty($missingFields)) {
-                    foreach ($missingFields as $field) {
-                        $alterQuery = "ALTER TABLE $tableName ADD COLUMN $field";
-                        if ($db->query($alterQuery) === TRUE) {
-                            $msg .= '数据表: ' . $tableName . ' 结构修复完成 Added missing field: ' . $field . '<br>';
-                        }
-                    }
-                }
+            foreach ($fields as $field) {
+                $alterQuery = "ALTER TABLE $tableName ADD COLUMN $field";
+                @$db->query($alterQuery, true);
             }
         }
-
         Output::ok($msg);
     }
 
